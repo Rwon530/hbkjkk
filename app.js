@@ -118,7 +118,9 @@ class ChatAIApp {
     this.switchView('chat');
 
     const sidebar = document.getElementById('app-sidebar');
+    const backdrop = document.getElementById('sidebar-backdrop');
     if (sidebar) sidebar.classList.remove('open');
+    if (backdrop) backdrop.classList.remove('show');
   }
 
   switchView(viewName) {
@@ -129,6 +131,10 @@ class ChatAIApp {
     document.querySelectorAll('.view-panel').forEach(panel => {
       panel.classList.toggle('active', panel.id === `view-${viewName}`);
     });
+    const sidebar = document.getElementById('app-sidebar');
+    const backdrop = document.getElementById('sidebar-backdrop');
+    if (sidebar) sidebar.classList.remove('open');
+    if (backdrop) backdrop.classList.remove('show');
     UI.refreshIcons();
   }
 
@@ -1015,9 +1021,30 @@ class ChatAIApp {
       tab.onclick = () => this.switchView(tab.dataset.view);
     });
 
+    const sidebar = document.getElementById('app-sidebar');
+    const backdrop = document.getElementById('sidebar-backdrop');
+    const closeSidebarBtn = document.getElementById('mobile-sidebar-close');
+
+    const openSidebar = () => {
+      sidebar?.classList.add('open');
+      backdrop?.classList.add('show');
+    };
+
+    const closeSidebar = () => {
+      sidebar?.classList.remove('open');
+      backdrop?.classList.remove('show');
+    };
+
     document.getElementById('mobile-menu-toggle')?.addEventListener('click', () => {
-      document.getElementById('app-sidebar')?.classList.toggle('open');
+      if (sidebar?.classList.contains('open')) {
+        closeSidebar();
+      } else {
+        openSidebar();
+      }
     });
+
+    closeSidebarBtn?.addEventListener('click', closeSidebar);
+    backdrop?.addEventListener('click', closeSidebar);
 
     document.getElementById('theme-toggle-btn')?.addEventListener('click', () => {
       const nextTheme = this.settings.theme === 'dark' ? 'light' : 'dark';

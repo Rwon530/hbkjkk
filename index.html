@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>علواني ابو البكري AI - منصة الذكاء الاصطناعي الشاملة</title>
+  <meta name="description" content="منصة علواني ابو البكري AI: محادثة ذكية، برمجة وأكواد، كتابة مقالات وصناعة محتوى، وتوليد وتصميم صور احترافية بالذكاء الاصطناعي مع دعم الـ APIs المتعددة." />
+
+  <!-- Favicon Icon -->
+  <link rel="icon" type="image/jpeg" href="./logo.jpg" />
+
+  <!-- Google Fonts: Cairo, Plus Jakarta Sans, JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Marked & DOMPurify for Markdown parsing -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dompurify@3.2.4/dist/purify.min.js"></script>
+
+  <!-- Canvas Confetti -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.4/dist/confetti.browser.min.js"></script>
+
+  <!-- Main Stylesheet (Root & Subfolder Fallbacks) -->
+  <link rel="stylesheet" href="./style.css" />
+  <link rel="stylesheet" href="./css/style.css" />
+</head>
+<body>
+
+  <div id="app-container">
+    
+    <!-- Sidebar Backdrop for Mobile -->
+    <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+
+    <!-- =========================================================================
+         Sidebar: Chat History, Categories, Brand & Status
+         ========================================================================= -->
+    <aside class="app-sidebar" id="app-sidebar">
+      
+      <!-- Sidebar Header -->
+      <div class="sidebar-header">
+        <a href="#" class="brand-logo" style="display:flex;align-items:center;gap:12px;text-decoration:none;">
+          <div class="brand-logo-frame" style="width:46px;height:46px;min-width:46px;max-width:46px;min-height:46px;max-height:46px;border-radius:50%;overflow:hidden;border:2px solid #3b82f6;box-shadow:0 0 14px rgba(59,130,246,0.4);display:flex;align-items:center;justify-content:center;background:#1e293b;flex-shrink:0;">
+            <img src="./logo.jpg" class="brand-avatar-img" alt="علواني ابو البكري AI" style="width:100%;height:100%;object-fit:cover;display:block;" />
+          </div>
+          <div>
+            <div style="display:flex;align-items:center;">
+              <span class="brand-title">علواني ابو البكري</span>
+              <span class="brand-badge">AI</span>
+            </div>
+            <div style="font-size:0.7rem;color:var(--text-dim);">منصة الذكاء الاصطناعي الشاملة</div>
+          </div>
+        </a>
+        <button class="icon-btn mobile-sidebar-close" id="mobile-sidebar-close" title="إغلاق القائمة">
+          <i data-lucide="x" style="width:18px;height:18px;"></i>
+        </button>
+      </div>
+
+      <!-- New Chat Button -->
+      <button class="new-chat-btn" id="new-chat-btn">
+        <i data-lucide="plus-circle" style="width:18px;height:18px;"></i>
+        <span>محادثة جديدة</span>
+      </button>
+
+      <!-- Search Filter -->
+      <div class="sidebar-search">
+        <div class="search-box">
+          <i data-lucide="search" style="width:16px;height:16px;color:var(--text-dim);"></i>
+          <input type="text" id="sidebar-search-input" placeholder="بحث في السجل..." />
+        </div>
+      </div>
+
+      <!-- Category Filter Pills -->
+      <div class="category-filter">
+        <div class="cat-pill active" data-cat="all">الكل</div>
+        <div class="cat-pill" data-cat="general">محادثات</div>
+        <div class="cat-pill" data-cat="coding">برمجة</div>
+        <div class="cat-pill" data-cat="article">مقالات</div>
+        <div class="cat-pill" data-cat="image">صور</div>
+      </div>
+
+      <!-- Chat History List -->
+      <div class="sidebar-history" id="sidebar-history">
+        <!-- Injected via JavaScript -->
+      </div>
+
+      <!-- Sidebar Footer -->
+      <div class="sidebar-footer">
+        <div class="api-status-badge">
+          <div class="status-indicator">
+            <span class="pulse-dot"></span>
+            <span id="api-provider-name">محرك مجاني فائق</span>
+          </div>
+          <span style="color:var(--success);font-weight:700;font-size:0.75rem;">متصل</span>
+        </div>
+
+        <button class="sidebar-settings-btn" id="sidebar-settings-btn">
+          <i data-lucide="settings" style="width:18px;height:18px;"></i>
+          <span>إعدادات الـ API والمظهر</span>
+        </button>
+      </div>
+
+    </aside>
+
+
+    <!-- =========================================================================
+         Main Application Window
+         ========================================================================= -->
+    <main class="app-main">
+      
+      <!-- Top Navigation Header -->
+      <header class="app-header">
+        
+        <div class="header-left">
+          <button class="menu-toggle-btn" id="mobile-menu-toggle">
+            <i data-lucide="menu" style="width:20px;height:20px;"></i>
+          </button>
+
+          <!-- Studio Mode Navigation Tabs -->
+          <div class="studio-tabs">
+            <button class="studio-tab active" data-view="chat">
+              <i data-lucide="message-square" style="width:16px;height:16px;"></i>
+              <span>الدردشة الذكية</span>
+            </button>
+            <button class="studio-tab" data-view="code">
+              <i data-lucide="code-2" style="width:16px;height:16px;"></i>
+              <span>استوديو البرمجة</span>
+            </button>
+            <button class="studio-tab" data-view="article">
+              <i data-lucide="file-text" style="width:16px;height:16px;"></i>
+              <span>محرر المقالات</span>
+            </button>
+            <button class="studio-tab" data-view="image">
+              <i data-lucide="image" style="width:16px;height:16px;"></i>
+              <span>استوديو الصور</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="header-right">
+          <!-- Language Toggle -->
+          <button class="icon-btn" id="lang-toggle-btn" title="تبديل اللغة (عربي / English)" style="font-weight:700;font-size:0.8rem;">
+            EN
+          </button>
+
+          <!-- Theme Toggle -->
+          <button class="icon-btn" id="theme-toggle-btn" title="تبديل المظهر (داكن / فاتح)">
+            <i data-lucide="sun" style="width:18px;height:18px;"></i>
+          </button>
+
+          <!-- Settings Button -->
+          <button class="icon-btn" id="open-settings-btn" title="الإعدادات ومفاتيح الـ API">
+            <i data-lucide="sliders" style="width:18px;height:18px;"></i>
+          </button>
+        </div>
+
+      </header>
+
+
+      <!-- =======================================================================
+           Views Container
+           ======================================================================= -->
+      <div class="views-container">
+        
+        <!-- =====================================================================
+             VIEW 1: AI Chat Area
+             ===================================================================== -->
+        <section class="view-panel active" id="view-chat">
+          <div class="chat-container">
+            
+            <!-- Messages Scroll Area -->
+            <div class="messages-scroll" id="messages-scroll">
+              
+              <!-- Welcome Hero Screen -->
+              <div class="welcome-container" id="welcome-screen">
+                <div class="welcome-avatar-wrapper" style="width:96px;height:96px;min-width:96px;max-width:96px;min-height:96px;max-height:96px;border-radius:50%;padding:3px;background:var(--accent-gradient);display:flex;align-items:center;justify-content:center;margin:0 auto 16px auto;box-shadow:0 8px 25px rgba(59,130,246,0.45);flex-shrink:0;overflow:hidden;">
+                  <img src="./logo.jpg" class="welcome-avatar-img" alt="علواني ابو البكري AI" style="width:100%;height:100%;border-radius:50%;object-fit:cover;display:block;" />
+                </div>
+                <h1 class="welcome-title">مرحباً بك في <span class="gradient-text">علواني ابو البكري AI</span></h1>
+                <p class="welcome-desc">
+                  منصتك الذكية الشاملة لجميع مهام الذكاء الاصطناعي: محادثة تفاعلية، برمجة وتصحيح أكواد، كتابة مقالات احترافية، وتوليد صور سينمائية فائقة الدقة.
+                </p>
+
+                <!-- Quick Prompt Cards -->
+                <div class="quick-prompts-grid">
+                  <div class="quick-prompt-card" data-prompt="اكتب لي تطبيق ويب تفاعلي بالـ HTML و CSS و JavaScript للآلة الحاسبة العلمية الحديثة">
+                    <div class="quick-prompt-icon"><i data-lucide="code-2" style="width:18px;height:18px;"></i></div>
+                    <h4>تطوير وبرمجة كود</h4>
+                    <p>بناء تطبيق ويب تفاعلي كامل مع شرح الكود وتشغيله</p>
+                  </div>
+
+                  <div class="quick-prompt-card" data-prompt="اكتب لي مقالاً احترافياً متوافقاً مع الـ SEO عن مستقبل الذكاء الاصطناعي في عام 2026 مع جدول المقارنة والأسئلة الشائعة">
+                    <div class="quick-prompt-icon"><i data-lucide="pen-tool" style="width:18px;height:18px;"></i></div>
+                    <h4>كتابة مقال SEO</h4>
+                    <p>صياغة مقال احترافي شامل مع العناوين والكلمات المفتاحية</p>
+                  </div>
+
+                  <div class="quick-prompt-card" data-prompt="اشرح لي كيف تعمل الشبكات العصبية العميقة والـ Transformers بأسلوب سهل وممتع">
+                    <div class="quick-prompt-icon"><i data-lucide="book-open" style="width:18px;height:18px;"></i></div>
+                    <h4>شرح وتبسيط مفاهيم</h4>
+                    <p>شرح تعليمي مبسط مع أمثلة عملية واضحة</p>
+                  </div>
+
+                  <div class="quick-prompt-card" data-prompt="أعطني خطة تسويقية متكاملة لإطلاق متجر إلكتروني جديد على منصات التواصل الاجتماعي">
+                    <div class="quick-prompt-icon"><i data-lucide="trending-up" style="width:18px;height:18px;"></i></div>
+                    <h4>خطة تسويق وإعلانات</h4>
+                    <p>استراتيجية نمو شاملة ومبتكرة لزيادة المبيعات</p>
+                  </div>
+                </div>
+
+              </div>
+
+            </div>
+
+            <!-- Chat Input Area -->
+            <div class="chat-input-container">
+              <div class="input-box-wrapper">
+                
+                <!-- Attachments Preview -->
+                <div class="input-attachments-preview" id="input-attachments-preview" style="display:none;"></div>
+
+                <!-- Input Textarea & Send Row -->
+                <div class="input-main-row">
+                  
+                  <button class="icon-btn" id="upload-file-btn" title="رفع صورة للتحليل البصري" style="border:none;background:transparent;color:var(--text-dim);">
+                    <i data-lucide="paperclip" style="width:20px;height:20px;"></i>
+                  </button>
+                  <input type="file" id="file-upload-input" accept="image/*" multiple style="display:none;" />
+
+                  <button class="icon-btn" id="mic-btn" title="الإدخال الصوتي (تحدث بالصوت)" style="border:none;background:transparent;color:var(--text-dim);">
+                    <i data-lucide="mic" style="width:20px;height:20px;"></i>
+                  </button>
+
+                  <textarea 
+                    id="chat-input" 
+                    class="chat-textarea" 
+                    placeholder="اكتب رسالتك، اسأل عن كود، أو اطلب مقالاً... (Shift + Enter لسطر جديد)" 
+                    rows="1"></textarea>
+
+                  <div class="input-actions">
+                    <button class="send-btn" id="send-btn" title="إرسال">
+                      <i data-lucide="arrow-up" style="width:20px;height:20px;"></i>
+                    </button>
+                  </div>
+
+                </div>
+
+              </div>
+              <div style="text-align:center;font-size:0.72rem;color:var(--text-dim);">
+                شات AI يدعم نماذج Gemini 2.0 Flash و GPT-4o والمحرك المجاني الفائق.
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+
+        <!-- =====================================================================
+             VIEW 2: Code Studio & Live Sandbox Runner
+             ===================================================================== -->
+        <section class="view-panel" id="view-code">
+          <div class="studio-layout">
+            
+            <!-- Left Code Editor Pane -->
+            <div class="studio-pane">
+              <div class="pane-header">
+                <div class="pane-title">
+                  <i data-lucide="code" style="width:18px;height:18px;color:var(--accent-primary);"></i>
+                  <span>محرر الأكواد (Code Editor)</span>
+                </div>
+                <div class="editor-controls">
+                  <button class="gradient-btn" id="run-code-btn" style="padding:6px 14px;border-radius:6px;font-size:0.85rem;display:flex;align-items:center;gap:6px;">
+                    <i data-lucide="play" style="width:14px;height:14px;"></i> تشغيل المعاينة
+                  </button>
+                </div>
+              </div>
+
+              <textarea id="code-studio-editor" class="code-editor-textarea" placeholder="<!-- اكتب أو الصق كود HTML / CSS / JS هنا لتجربته مباشرة -->
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body {
+      font-family: sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      background: linear-gradient(135deg, #0f172a, #1e1b4b);
+      color: white;
+    }
+    .card {
+      background: rgba(255,255,255,0.1);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255,255,255,0.2);
+      padding: 30px;
+      border-radius: 20px;
+      text-align: center;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+    }
+    button {
+      background: #3b82f6;
+      border: none;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 15px;
+    }
+  </style>
+</head>
+<body>
+  <div class='card'>
+    <h2>🚀 مشغل الأكواد المباشر</h2>
+    <p>قم بتعديل الكود واضغط على 'تشغيل المعاينة' لرؤية النتيجة فوراً!</p>
+    <button onclick='alert(\"تم النقر بنجاح!\")'>جرّب النقر هنا</button>
+  </div>
+</body>
+</html>"></textarea>
+
+              <div class="code-tools-bar">
+                <span style="font-size:0.8rem;color:var(--text-dim);display:flex;align-items:center;gap:4px;">
+                  <i data-lucide="wand-2" style="width:14px;height:14px;"></i> أدوات الذكاء الاصطناعي:
+                </span>
+                <button class="tool-chip-btn code-action-chip" data-action="explain">
+                  <i data-lucide="help-circle" style="width:14px;height:14px;"></i> شرح الكود
+                </button>
+                <button class="tool-chip-btn code-action-chip" data-action="fix">
+                  <i data-lucide="bug" style="width:14px;height:14px;"></i> فحص وإصلاح الأخطاء
+                </button>
+                <button class="tool-chip-btn code-action-chip" data-action="optimize">
+                  <i data-lucide="zap" style="width:14px;height:14px;"></i> تحسين الأداء
+                </button>
+                <button class="tool-chip-btn code-action-chip" data-action="convert">
+                  <i data-lucide="refresh-cw" style="width:14px;height:14px;"></i> تحويل لـ Python
+                </button>
+              </div>
+            </div>
+
+            <!-- Right Live Sandbox Preview Pane -->
+            <div class="studio-pane">
+              <div class="pane-header">
+                <div class="pane-title">
+                  <i data-lucide="eye" style="width:18px;height:18px;color:var(--success);"></i>
+                  <span>المعاينة التفاعلية الحية (Live Sandbox)</span>
+                </div>
+              </div>
+              <iframe id="code-preview-frame" class="live-preview-frame" sandbox="allow-scripts allow-modals"></iframe>
+            </div>
+
+          </div>
+        </section>
+
+
+        <!-- =====================================================================
+             VIEW 3: Article & Content Studio
+             ===================================================================== -->
+        <section class="view-panel" id="view-article">
+          <div class="article-studio-container">
+            
+            <!-- Article Settings Sidebar Form -->
+            <div class="article-sidebar-form">
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+                <i data-lucide="pen-tool" style="width:20px;height:20px;color:var(--accent-primary);"></i>
+                <h3 style="font-size:1.1rem;font-weight:800;">إعدادات كتابة المقال</h3>
+              </div>
+
+              <div class="form-group">
+                <label>موضوع أو عنوان المقال *</label>
+                <input type="text" id="article-topic" class="form-control" placeholder="مثال: الذكاء الاصطناعي في الطب لعام 2026" />
+              </div>
+
+              <div class="form-group">
+                <label>الكلمات المفتاحية المستهدفة (SEO)</label>
+                <input type="text" id="article-keywords" class="form-control" placeholder="مثال: ذكاء اصطناعي، تشخيص طبي، صحة رقمية" />
+              </div>
+
+              <div class="form-group">
+                <label>نبرة وأسلوب الكتابة</label>
+                <select id="article-tone" class="form-control">
+                  <option value="احترافي وأكاديمي">احترافي وأكاديمي</option>
+                  <option value="تسويقي جذاب ومقنع">تسويقي جذاب ومقنع</option>
+                  <option value="سردي وقصصي مشوق">سردي وقصصي مشوق</option>
+                  <option value="مبسط وسهل للمبتدئين">مبسط وسهل للمبتدئين</option>
+                  <option value="صحفي وإخباري">صحفي وإخباري</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label>طول وعمق المقال</label>
+                <select id="article-length" class="form-control">
+                  <option value="مقال شامل ومفصل (1200+ كلمة)">مقال شامل ومفصل (1200+ كلمة)</option>
+                  <option value="مقال متوسط ومركز (700 كلمة)">مقال متوسط ومركز (700 كلمة)</option>
+                  <option value="مقال سريع ومختصر (350 كلمة)">مقال سريع ومختصر (350 كلمة)</option>
+                </select>
+              </div>
+
+              <button class="new-chat-btn" id="generate-article-btn" style="margin:8px 0 0 0;width:100%;">
+                <i data-lucide="pen-tool" style="width:18px;height:18px;"></i>
+                <span>إنشاء المقال بالذكاء الاصطناعي</span>
+              </button>
+            </div>
+
+            <!-- Article Output Preview Area -->
+            <div class="article-content-panel">
+              <div class="pane-header">
+                <div class="pane-title">
+                  <i data-lucide="file-check" style="width:18px;height:18px;color:var(--accent-secondary);"></i>
+                  <span>المقال الناتج والمنسق</span>
+                  <span id="article-word-count" style="font-size:0.75rem;color:var(--text-muted);background:var(--bg-glass-strong);padding:3px 8px;border-radius:4px;display:none;"></span>
+                </div>
+                <div style="display:flex;align-items:center;gap:6px;">
+                  <button class="tool-chip-btn" id="copy-article-btn" title="نسخ المقال بالكامل">
+                    <i data-lucide="copy" style="width:14px;height:14px;"></i>
+                    <span>نسخ المقال</span>
+                  </button>
+                  <button class="tool-chip-btn" id="download-article-btn" title="تحميل المقال كملف نصي">
+                    <i data-lucide="download" style="width:14px;height:14px;"></i>
+                    <span>تنزيل</span>
+                  </button>
+                  <button class="tool-chip-btn" id="expand-article-btn" title="توسيع وكتابة المزيد من الفقرات" style="background:rgba(59,130,246,0.15);color:var(--accent-primary);border-color:rgba(59,130,246,0.3);display:none;">
+                    <i data-lucide="plus-circle" style="width:14px;height:14px;"></i>
+                    <span>كتابة المزيد</span>
+                  </button>
+                  <button class="icon-btn" onclick="window.print()" title="طباعة / تصدير PDF">
+                    <i data-lucide="printer" style="width:16px;height:16px;"></i>
+                  </button>
+                </div>
+              </div>
+
+              <div class="article-output-scroll" id="article-output-scroll">
+                <div id="article-output-body" class="markdown-body">
+                  <div style="text-align:center;padding:60px 20px;color:var(--text-muted);">
+                    <i data-lucide="file-text" style="width:48px;height:48px;margin-bottom:16px;opacity:0.4;"></i>
+                    <h3 style="font-size:1.2rem;margin-bottom:8px;">محرر المقالات الاحترافي جاهز</h3>
+                    <p style="font-size:0.9rem;">أدخل موضوع المقال واضغط على زر التوليد لصياغة مقال متكامل مهيأ للـ SEO.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+
+        <!-- =====================================================================
+             VIEW 4: AI Image Generation Studio
+             ===================================================================== -->
+        <section class="view-panel" id="view-image">
+          <div class="image-studio-container">
+            
+            <!-- Left Image Controls Panel -->
+            <div class="image-controls-panel">
+              <div style="display:flex;align-items:center;gap:8px;">
+                <i data-lucide="palette" style="width:20px;height:20px;color:var(--accent-primary);"></i>
+                <h3 style="font-size:1.1rem;font-weight:800;">استوديو تصميم الصور</h3>
+              </div>
+
+              <!-- Prompt Input Area -->
+              <div class="form-group">
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                  <label>وصف الصورة (Prompt) *</label>
+                  <button id="enhance-prompt-btn" class="tool-chip-btn" style="padding:3px 8px;font-size:0.75rem;background:rgba(59,130,246,0.15);color:var(--accent-primary);border-color:rgba(59,130,246,0.3);">
+                    <i data-lucide="wand-2" style="width:12px;height:12px;"></i> تحسين البرومبت بالـ AI
+                  </button>
+                </div>
+                <textarea id="image-prompt-input" class="prompt-textarea" placeholder="مثال: رائد فضاء عربي يستكشف كوكب المريخ في المستقبل مع مدن زجاجية عملاقة وإضاءة سينمائية..."></textarea>
+              </div>
+
+              <!-- Style Selector -->
+              <div class="form-group">
+                <label>النمط الفني (Art Style)</label>
+                <div class="style-cards-grid">
+                  <button class="style-card-btn active" data-style="realistic">واقعي فوتوغرافي</button>
+                  <button class="style-card-btn" data-style="cinematic">سينمائي درامي</button>
+                  <button class="style-card-btn" data-style="3d_render">ثلاثي الأبعاد 3D</button>
+                  <button class="style-card-btn" data-style="anime">أنمي ياباني</button>
+                  <button class="style-card-btn" data-style="cyberpunk">سايبر بانك نيون</button>
+                  <button class="style-card-btn" data-style="oil_painting">لوحة زيتية</button>
+                  <button class="style-card-btn" data-style="digital_art">فن رقمي</button>
+                  <button class="style-card-btn" data-style="minimalist">فيكتور مودرن</button>
+                </div>
+              </div>
+
+              <!-- Aspect Ratio Selector -->
+              <div class="form-group">
+                <label>أبعاد ونسبة الصورة</label>
+                <div class="ratio-buttons-row">
+                  <button class="ratio-btn active" data-ratio="1:1">1:1 مربع</button>
+                  <button class="ratio-btn" data-ratio="16:9">16:9 عريض</button>
+                  <button class="ratio-btn" data-ratio="9:16">9:16 ستوري</button>
+                  <button class="ratio-btn" data-ratio="4:3">4:3 شاشة</button>
+                </div>
+              </div>
+
+              <!-- Generate Button -->
+              <button class="new-chat-btn" id="generate-image-btn" style="margin:8px 0 0 0;width:100%;">
+                <i data-lucide="sparkles" style="width:18px;height:18px;"></i>
+                <span>تصميم وتوليد الصورة</span>
+              </button>
+
+            </div>
+
+            <!-- Right Image Display & Gallery Panel -->
+            <div class="image-display-panel">
+              
+              <!-- Current Image Preview Card -->
+              <div class="current-generated-image-card">
+                <div class="image-preview-wrapper" id="image-preview-wrapper">
+                  <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:340px;color:var(--text-dim);">
+                    <i data-lucide="image" style="width:54px;height:54px;margin-bottom:12px;opacity:0.3;"></i>
+                    <p style="font-size:0.95rem;font-weight:600;">ستظهر صورتك المصممة بالذكاء الاصطناعي هنا بدقة عالية</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Gallery Section -->
+              <div>
+                <h4 style="font-size:1rem;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:6px;">
+                  <i data-lucide="grid" style="width:16px;height:16px;color:var(--accent-primary);"></i>
+                  <span>معرض الصور المولدة حديثاً</span>
+                </h4>
+                <div class="image-gallery-grid" id="image-gallery-grid">
+                  <!-- Injected via JavaScript -->
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+        </section>
+
+      </div>
+
+    </main>
+
+  </div>
+
+
+  <!-- =========================================================================
+       Settings & API Configuration Modal
+       ========================================================================= -->
+  <div class="modal-backdrop" id="settings-modal">
+    <div class="modal-dialog">
+      
+      <div class="modal-header">
+        <div class="modal-title">
+          <i data-lucide="sliders-horizontal" style="width:20px;height:20px;color:var(--accent-primary);"></i>
+          <span>إعدادات الذكاء الاصطناعي ومفاتيح الـ API</span>
+        </div>
+        <button class="icon-btn" id="close-settings-btn" style="border:none;background:transparent;">
+          <i data-lucide="x" style="width:20px;height:20px;"></i>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        
+        <!-- Provider Selection -->
+        <div class="form-group">
+          <label>مزود خدمة الذكاء الاصطناعي (AI Engine)</label>
+          <select id="setting-provider" class="form-control">
+            <option value="default">المحرك المجاني الفائق (بدون مفتاح - مجاني 100%)</option>
+            <option value="gemini">Google Gemini API (Gemini 2.0 / 1.5 Flash & Pro)</option>
+            <option value="openai">OpenAI API (GPT-4o / GPT-4o-mini)</option>
+            <option value="openrouter">OpenRouter (DeepSeek R1 / Claude / Llama 3.3)</option>
+          </select>
+        </div>
+
+        <!-- Gemini Group -->
+        <div id="gemini-settings-group" style="display:none;" class="form-group">
+          <label>مفتاح Gemini API Key</label>
+          <input type="password" id="setting-gemini-key" class="form-control" placeholder="AIzaSy..." />
+          <div style="display:flex;justify-content:space-between;margin-top:4px;">
+            <span style="font-size:0.75rem;color:var(--text-dim);">مفتاحك آمن 100% ويحفظ فقط في متصفحك.</span>
+            <a href="https://aistudio.google.com/app/apikey" target="_blank" style="color:var(--accent-primary);font-size:0.75rem;text-decoration:none;">احصل على مفتاح Gemini مجاناً ↗</a>
+          </div>
+
+          <label style="margin-top:10px;">نموذج Gemini</label>
+          <select id="setting-gemini-model" class="form-control">
+            <option value="gemini-3.6-flash">Gemini 3.6 Flash (النموذج الحديث فائق السرعة والذكاء)</option>
+            <option value="gemini-2.5-flash">Gemini 2.5 Flash</option>
+            <option value="gemini-2.0-flash">Gemini 2.0 Flash</option>
+            <option value="gemini-1.5-flash">Gemini 1.5 Flash</option>
+            <option value="gemini-1.5-pro">Gemini 1.5 Pro</option>
+          </select>
+        </div>
+
+        <!-- OpenAI Group -->
+        <div id="openai-settings-group" style="display:none;" class="form-group">
+          <label>مفتاح OpenAI API Key</label>
+          <input type="password" id="setting-openai-key" class="form-control" placeholder="sk-proj-..." />
+          
+          <label style="margin-top:10px;">نموذج OpenAI</label>
+          <select id="setting-openai-model" class="form-control">
+            <option value="gpt-4o-mini">GPT-4o mini (سريع واقتصادي)</option>
+            <option value="gpt-4o">GPT-4o (الأقوى والأذكى)</option>
+          </select>
+        </div>
+
+        <!-- OpenRouter Group -->
+        <div id="openrouter-settings-group" style="display:none;" class="form-group">
+          <label>مفتاح OpenRouter API Key</label>
+          <input type="password" id="setting-openrouter-key" class="form-control" placeholder="sk-or-..." />
+        </div>
+
+        <!-- Persona -->
+        <div class="form-group">
+          <label>شخصية ودور الذكاء الاصطناعي (AI Persona)</label>
+          <select id="setting-persona" class="form-control">
+            <option value="general">مساعد ذكي شامل لجميع المهام</option>
+            <option value="coder">مهندس برمجيات ومطور محترف (Coding Expert)</option>
+            <option value="writer">كاتب مقالات ومحتوى إبداعي وSEO</option>
+            <option value="designer">مهندس برومبت لتصميم الصور</option>
+          </select>
+        </div>
+
+        <!-- Temperature -->
+        <div class="form-group">
+          <div style="display:flex;justify-content:space-between;">
+            <label>درجة الإبداع والحرارة (Temperature)</label>
+            <span id="setting-temp-val" style="font-weight:700;color:var(--accent-primary);">0.7</span>
+          </div>
+          <input type="range" id="setting-temp" min="0.1" max="1.5" step="0.1" value="0.7" style="width:100%;accent-color:var(--accent-primary);" />
+        </div>
+
+        <!-- Test Connection Button -->
+        <div>
+          <button class="tool-chip-btn" id="test-api-btn" style="width:100%;justify-content:center;padding:10px;background:rgba(59,130,246,0.1);border-color:rgba(59,130,246,0.3);color:var(--accent-primary);">
+            <i data-lucide="activity" style="width:16px;height:16px;"></i>
+            <span>فحص واختبار الاتصال بالخادم</span>
+          </button>
+        </div>
+
+      </div>
+
+      <div class="modal-footer">
+        <button class="tool-chip-btn" id="cancel-settings-btn" onclick="document.getElementById('settings-modal').classList.remove('show')">إلغاء</button>
+        <button class="gradient-btn" id="save-settings-btn" style="padding:10px 24px;border-radius:var(--radius-sm);">حفظ التغييرات</button>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- Application Scripts (Loads module from root or js/) -->
+  <script type="module" src="./app.js"></script>
+
+</body>
+</html>
