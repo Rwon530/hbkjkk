@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#0c0906">
+  <title>AI Chat — AI Workspace</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@400;700&family=Cairo:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="bg-orb orb-a"></div><div class="bg-orb orb-b"></div>
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-mark">✦</div>
+      <div><strong>AI Chat</strong><span>AI Workspace</span></div>
+    </div>
+    <div class="top-actions">
+      <button class="ghost" id="apiBtn">مفتاح API</button>
+      <button class="ghost" id="clearBtn">مسح المحادثة</button>
+    </div>
+  </header>
+
+  <main class="shell">
+    <section class="hero">
+      <div class="eyebrow">AI CHAT • GITHUB PAGES</div>
+      <h1>كل أدوات الذكاء الاصطناعي في<br><span>واجهة واحدة.</span></h1>
+      <p>محادثة، فهم الصور، وإنشاء الصور — مع اختيار النموذج مباشرة من Gemini API.</p>
+      <div class="hero-actions">
+        <button class="primary" id="newChatBtn">＋ محادثة جديدة</button>
+        <button class="secondary" id="imageModeBtn">◈ إنشاء صورة</button>
+      </div>
+    </section>
+
+    <section class="workspace">
+      <aside class="sidebar">
+        <div class="side-title">الوضع</div>
+        <button class="nav active" data-mode="chat">◌ <span>المحادثة</span></button>
+        <button class="nav" data-mode="image">▧ <span>إنشاء الصور</span></button>
+        <button class="nav" data-mode="vision">◉ <span>تحليل صورة</span></button>
+
+        <div class="side-title models-title">النموذج</div>
+        <select id="model"></select>
+        <div id="modelInfo" class="model-info"></div>
+
+        <div class="api-mini">
+          <div><span class="dot" id="apiDot"></span><span id="apiState">المفتاح غير محفوظ</span></div>
+          <button id="apiMini">إعداد API</button>
+        </div>
+      </aside>
+
+      <section class="chat-panel">
+        <div class="panel-head">
+          <div>
+            <div class="panel-kicker" id="modeKicker">GEMINI CHAT</div>
+            <h2 id="panelTitle">ماذا تريد أن نصنع اليوم؟</h2>
+          </div>
+          <span class="status-pill" id="statusPill">جاهز</span>
+        </div>
+
+        <div id="messages" class="messages">
+          <div class="empty-state">
+            <div class="empty-icon">✦</div>
+            <h3>ابدأ تجربة AI Chat</h3>
+            <p>اختر نموذجًا من القائمة واكتب طلبك بالأسفل.</p>
+            <div class="quick-grid">
+              <button data-quick="اكتب لي فكرة مشروع ويب احترافية باستخدام HTML وCSS وJavaScript">فكرة مشروع ويب</button>
+              <button data-quick="حلل لي هذه الفكرة وحولها إلى خطة تنفيذ واضحة">تحليل فكرة</button>
+              <button data-quick="اكتب لي وصفًا احترافيًا لصورة سينمائية">وصف صورة</button>
+            </div>
+          </div>
+        </div>
+
+        <div id="attachmentPreview" class="attachment-preview hidden"></div>
+
+        <form id="composer" class="composer">
+          <div class="composer-row">
+            <label class="attach" title="إرفاق صورة">
+              ＋
+              <input id="imageInput" type="file" accept="image/png,image/jpeg,image/webp" hidden>
+            </label>
+            <textarea id="prompt" rows="1" placeholder="اكتب رسالتك هنا..."></textarea>
+            <button class="send" id="sendBtn" type="submit">↑</button>
+          </div>
+          <div class="composer-foot">
+            <span id="hint">Gemini API • المفتاح محفوظ محليًا في هذا المتصفح</span>
+            <span>GitHub Pages</span>
+          </div>
+        </form>
+      </section>
+    </section>
+  </main>
+
+  <dialog id="apiDialog">
+    <form method="dialog" class="dialog-card" id="apiForm">
+      <button class="close" value="cancel">×</button>
+      <div class="dialog-icon">⌁</div>
+      <h2>Gemini API Key</h2>
+      <p>أدخل مفتاحك الشخصي. لن يتم وضعه داخل ملفات GitHub؛ يتم حفظه محليًا في هذا المتصفح فقط.</p>
+      <div class="key-wrap">
+        <input id="apiKey" type="password" autocomplete="off" placeholder="AIza...">
+        <button type="button" id="showKey">إظهار</button>
+      </div>
+      <div class="dialog-actions">
+        <button class="secondary" value="cancel">إلغاء</button>
+        <button class="primary" id="saveKey" value="default">حفظ واختبار</button>
+      </div>
+      <div id="apiTest" class="test"></div>
+    </form>
+  </dialog>
+
+  <script src="app.js"></script>
+</body>
+</html>
